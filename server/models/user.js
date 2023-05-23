@@ -14,10 +14,13 @@ const userSchema = mongoose.Schema(
       ],
       unique: true,
     },
-    password: { type: String, required: [true, "Please provide password"] },
+    password: {
+      type: String,
+      required: [true, "Please provide password"],
+      minlength: 6,
+    },
     pic: {
       type: String,
-      required: true,
       default:
         "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
     },
@@ -32,7 +35,7 @@ userSchema.pre("save", async function () {
 
 userSchema.methods.CreateJwt = function () {
   return jwt.sign(
-    { userId: this._id, name: this.name },
+    { userId: this._id, email: this.email },
     process.env.JWT_SECRET,
     {
       expiresIn: process.env.JWT_EXPIRES_IN,
@@ -41,6 +44,8 @@ userSchema.methods.CreateJwt = function () {
 };
 
 userSchema.methods.ComparePassword = async function (givenPassword) {
+  console.log(givenPassword);
+  console.log(this.password);
   const isMatch = await bcrypt.compare(givenPassword, this.password);
   return isMatch;
 };
