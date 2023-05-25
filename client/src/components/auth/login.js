@@ -32,10 +32,10 @@ const Login = () => {
       return;
     }
     try {
-      const { data } = await axios.post(
-        "api/v1/user/login",
-        { email, password },
-      );
+      const { data } = await axios.post("api/v1/user/login", {
+        email,
+        password,
+      });
       Toast({
         title: "Login Successful",
         status: "success",
@@ -43,11 +43,12 @@ const Login = () => {
         isClosable: true,
         position: "bottom",
       });
-      localStorage.setItem("userInfo",JSON.stringify(data))
-      setLoading(false)
+      localStorage.setItem("userInfo", JSON.stringify(data));
+      setLoading(false);
+      navigate("/chats")
     } catch (error) {
       console.log(error);
-      setLoading(false)
+      setLoading(false);
       Toast({
         title: "Error Occured",
         description: error.response.data.msg,
@@ -58,7 +59,6 @@ const Login = () => {
       });
     }
   };
-  const guestUserHandler = () => {};
   return (
     <VStack>
       <FormControl id="emaill" isRequired>
@@ -66,6 +66,7 @@ const Login = () => {
         <Input
           placeholder="Enter your email"
           onChange={(e) => setEmail(e.target.value)}
+          value={email}
         />
       </FormControl>
 
@@ -76,6 +77,7 @@ const Login = () => {
             type={showP ? "text" : "password"}
             placeholder="Enter your password"
             onChange={(e) => setPassword(e.target.value)}
+            value={password}
           />
           <InputRightElement width="4.5rem">
             <Button h="1.75rem" size="sm" onClick={() => setShowP(!showP)}>
@@ -95,10 +97,14 @@ const Login = () => {
         Login
       </Button>
       <Button
+        variant="solid"
         colorScheme="green"
         width="100%"
         marginTop="15"
-        onClick={guestUserHandler}
+        onClick={() => {
+          setEmail("guest@example.com");
+          setPassword("123456");
+        }}
       >
         Guest User Login
       </Button>

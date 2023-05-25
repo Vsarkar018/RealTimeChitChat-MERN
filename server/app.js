@@ -3,12 +3,17 @@ require("express-async-errors");
 const express = require("express");
 const app = express();
 const connectDB = require("./db/connect");
-const userRoutes = require("./routes/userRoutes");
 app.use(express.json());
+
+const userRoutes = require("./routes/userRoutes");
+const chatRoutes = require("./routes/chatRoutes")
+const authMiddleware = require('./middleware/auth')
 const errorHandlerMiddleware = require("./middleware/error-handler");
 const notFound = require("./middleware/notFound");
 
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/chats",authMiddleware, chatRoutes);
+
 app.use(notFound);
 app.use(errorHandlerMiddleware);
 
