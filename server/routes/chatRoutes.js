@@ -13,7 +13,7 @@ const {
 router.route("/").post(accessChats).get(fetchChats);
 router.post("/group", createGroupChat);
 router.put("/rename", renameGroup);
-router.put("groupadd", addToGroup);
-router.put("groupremove", removeFromGroup);
+router.put("/groupadd", addToGroup);
+router.put("/groupremove", removeFromGroup);
 
 module.exports = router;
