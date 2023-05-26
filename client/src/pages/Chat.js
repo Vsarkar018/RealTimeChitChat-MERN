@@ -1,17 +1,28 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Box, Container,Text } from "@chakra-ui/react";
+import React from "react";
+import { useChatContext } from "../context/ChatProvider";
+import { Box } from "@chakra-ui/react";
+
+import SideDrawer from "../components/SideDrawer";
+import ChatBox from "../components/ChatBox";
+import ChatList from "../components/ChatList";
 
 const Chat = () => {
-return (
-<Container maxWidth="xl" centerContent>
-  <Box display="flex"
-  justifyContent='enter'
-  padding={3}
-  bg={"white"}
-  ><Text>a;fkd;afjk</Text></Box>
-</Container>
-)
+  const { user } = useChatContext();
+  return (
+    <div style={{ width: "100%" }}>
+      {user && <SideDrawer />}
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        w="100%"
+        h="91.5vh"
+        p='10px'
+      >
+        {user && <ChatList />}
+        {user && <ChatBox />}
+      </Box>
+    </div>
+  );
 };
 
 export default Chat;

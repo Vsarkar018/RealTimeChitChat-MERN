@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Container,
   Box,
@@ -11,7 +11,15 @@ import {
 } from "@chakra-ui/react";
 import Login from "../components/auth/login";
 import Signup from "../components/auth/signup";
+import { useNavigate} from "react-router-dom";
 const Home = () => {
+  const navigate = useNavigate()
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    if(userInfo){
+      navigate("/chats")
+    }
+  }, [navigate]);
   return (
     <Container maxWidth="xl" centerContent>
       <Box
@@ -32,19 +40,18 @@ const Home = () => {
         padding={4}
         borderRadius="lg"
         borderWidth="1px"
-
       >
-        <Tabs variant="soft-rounded" >
-          <TabList mb='1em'>
-            <Tab width='50%'>Login</Tab>
-            <Tab width='50%'>Sign Up</Tab>
+        <Tabs variant="soft-rounded">
+          <TabList mb="1em">
+            <Tab width="50%">Login</Tab>
+            <Tab width="50%">Sign Up</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
-              <Login/>
+              <Login />
             </TabPanel>
             <TabPanel>
-              <Signup/>
+              <Signup />
             </TabPanel>
           </TabPanels>
         </Tabs>
