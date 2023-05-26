@@ -37,10 +37,11 @@ const loginUser = async (req, res) => {
   if (!isMatch) {
     throw new Unauthorized("Invalid Password");
   }
+  console.log(user.pic);
   const token = user.CreateJwt();
   res
     .status(StatusCodes.OK)
-    .json({ _id: user._id, name: user.name, token: token });
+    .json({ _id: user._id, name: user.name,pic:user.pic, email:user.email,token: token });
 };
 
 const getAllUsers = async (req, res) => {
