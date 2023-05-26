@@ -53,8 +53,8 @@ const getAllUsers = async (req, res) => {
         ],
       }
     : {};
-  const users = await User.find(keyword).find({_id:{$ne:req.user._id}});
-  res.status(StatusCodes.OK).send(users);
+  const users = await User.find(keyword).find({_id:{$ne:req.user._id}}).select('-password');
+  res.status(StatusCodes.OK).json(users);
 };
 
 module.exports = { registerUser, loginUser, getAllUsers };
