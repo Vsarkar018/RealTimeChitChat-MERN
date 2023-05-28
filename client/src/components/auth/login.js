@@ -64,6 +64,7 @@ const Login = () => {
       <FormControl id="emaill" isRequired>
         <FormLabel>Email</FormLabel>
         <Input
+          bg="white"
           placeholder="Enter your email"
           onChange={(e) => setEmail(e.target.value)}
           value={email}
@@ -74,6 +75,7 @@ const Login = () => {
         <FormLabel>Password</FormLabel>
         <InputGroup>
           <Input
+            bg="white"
             type={showP ? "text" : "password"}
             placeholder="Enter your password"
             onChange={(e) => setPassword(e.target.value)}
@@ -88,7 +90,7 @@ const Login = () => {
       </FormControl>
 
       <Button
-        colorScheme="blue"
+        colorScheme="messenger"
         width="100%"
         marginTop="15"
         onClick={submitHandler}
@@ -98,7 +100,7 @@ const Login = () => {
       </Button>
       <Button
         variant="solid"
-        colorScheme="green"
+        colorScheme="teal"
         width="100%"
         marginTop="15"
         onClick={() => {
