@@ -3,17 +3,19 @@ import { useChatContext } from "../context/ChatProvider";
 import { Box, Button, useToast, Text, Stack } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import axios from "axios";
-import ChatLoading from "./ChatLoading";
+import ChatLoading from "./misc/ChatLoading";
 import { getSender } from "../config/Logic";
+import GroupChatModal from "./misc/GroupChatModal";
 const ChatList = () => {
   const [loggedUser, setLoggedUser] = useState();
-  const { user, selectedChat, setSelectedChat, chats, setChats } =
+  
+  const { user, selectedChat, setSelectedChat, chats, setChats, fetchAgain } =
     useChatContext();
   const Toast = useToast();
 
   const fetchChats = async () => {
     try {
-      const { data } = await axios.get("/api/v1/chats", {
+      const { data } = await axios.get("/api/v1/chats/", {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
@@ -30,22 +32,22 @@ const ChatList = () => {
       });
       return;
     }
-  };
+  }
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
-  },[]);
+  }, [fetchAgain]);
   return (
     <Box
-      display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
+       display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
       flexDir="column"
-      alignContent="center"
-      padding={3}
+      alignItems="center"
+      p={3}
       bg="white"
-      width={{ base: "100px", md: "31%" }}
+      w={{ base: "100%", md: "31%" }}
       borderRadius="lg"
       borderWidth="1px"
-    >
+      >
       <Box
         py={3}
         px={3}
@@ -56,13 +58,15 @@ const ChatList = () => {
         alignItems="center"
       >
         My Chats
-        <Button
-          display="flex"
-          fontSize={{ base: "17px", md: "10px", lg: "17px" }}
-          rightIcon={<AddIcon />}
-        >
-          New Group Chat
-        </Button>
+        <GroupChatModal>
+          <Button
+            display="flex"
+            fontSize={{ base: "17px", md: "10px", lg: "17px" }}
+            rightIcon={<AddIcon />}
+          >
+            New Group Chat
+          </Button>
+        </GroupChatModal>
       </Box>
       <Box
         display="flex"
@@ -89,8 +93,8 @@ const ChatList = () => {
                   borderRadius="lg"
                 >
                   <Text>
-                    {!chat.isGroup
-                      ? getSender(loggedUser, chat.users)
+                    {!chat.isGroup && chat
+                      ? getSender(loggedUser,chat.users)
                       : chat.chatName}
                   </Text>
                 </Box>

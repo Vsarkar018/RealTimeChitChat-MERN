@@ -22,10 +22,10 @@ import {
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import React, { useState, useRef } from "react";
 import { useChatContext } from "../context/ChatProvider";
-import ProfileModal from "./ProfileModal";
+import ProfileModal from "./misc/ProfileModal";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import ChatLoading from "./ChatLoading";
+import ChatLoading from "./misc/ChatLoading";
 import UserList from "./UserList";
 const SideDrawer = () => {
   const [search, setSearch] = useState("");
@@ -71,6 +71,9 @@ const SideDrawer = () => {
     }
   };
   const accessChat = async (userId) => {
+    if (!userId) {
+      return;
+    }
     try {
       setLoadingChat(true);
       const { data } = await axios.post(
@@ -83,7 +86,8 @@ const SideDrawer = () => {
           },
         }
       );
-      if (chats.find((c) => c._id === data._id)) {
+
+      if (!chats.find((c) => c._id === data._id)) {
         setChats([data, ...chats]);
       }
       setSelectedChat(data);
