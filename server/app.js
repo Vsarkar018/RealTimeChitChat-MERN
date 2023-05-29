@@ -6,14 +6,15 @@ const connectDB = require("./db/connect");
 app.use(express.json());
 
 const userRoutes = require("./routes/userRoutes");
-const chatRoutes = require("./routes/chatRoutes")
-const authMiddleware = require('./middleware/auth')
+const chatRoutes = require("./routes/chatRoutes");
+const messageRoutes = require("./routes/messageRoutes");
+const authMiddleware = require("./middleware/auth");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 const notFound = require("./middleware/notFound");
 
 app.use("/api/v1/user", userRoutes);
-app.use("/api/v1/chats",authMiddleware, chatRoutes);
-
+app.use("/api/v1/chats", authMiddleware, chatRoutes);
+app.use("/api/v1/msgs", authMiddleware, messageRoutes);
 app.use(notFound);
 app.use(errorHandlerMiddleware);
 
