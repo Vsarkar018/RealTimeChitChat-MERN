@@ -16,7 +16,6 @@ import {
   FormControl,
   Input,
   Spinner,
-  useRangeSliderContext,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { ViewIcon } from "@chakra-ui/icons";
@@ -29,8 +28,6 @@ const UpdateGroupChatModal = () => {
     selectedChat,
     setSelectedChat,
     user,
-    setChats,
-    chats,
   } = useChatContext();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
