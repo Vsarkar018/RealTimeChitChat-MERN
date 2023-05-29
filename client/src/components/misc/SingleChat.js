@@ -5,25 +5,44 @@ import {
   FormControl,
   IconButton,
   Input,
+  InputGroup,
   Spinner,
   Text,
   useToast,
+  InputRightElement,
 } from "@chakra-ui/react";
-import { ArrowBackIcon } from "@chakra-ui/icons";
+import { ArrowBackIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import { getSender, getSenderDetails } from "../../config/Logic";
 import ProfileModal from "./ProfileModal";
 import UpdateGroupChatModal from "./UpdateGroupChatModal";
+import Lottie from "react-lottie";
 import axios from "axios";
+import io from "socket.io-client";
 import ChatMessage from "./ChatMessage";
-import { m } from "framer-motion";
+import animationData from "../../assets/typingAnimation.json";
+const ENDPOINT = "http://localhost:5000";
+let socket, selectedChatCompare;
 const SingleChat = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState();
   const { user, selectedChat, setSelectedChat } = useChatContext();
+  const [typing, setTypinig] = useState(false);
+  const [isTyping, setIsTypinig] = useState(false);
   const toast = useToast();
+  const [socketConnected, setSocketConnected] = useState(false);
+
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit("setup", user);
+    socket.on("connected", () => setSocketConnected(true));
+    socket.on("typing", () => setIsTypinig(true));
+    socket.on("stopTyping", () => setIsTypinig(false));
+  }, []);
+
   const sendMessage = async (e) => {
     if (e.key === "Enter" && newMessage) {
+      socket.emit("stopTyping", selectedChat._id);
       try {
         const { data } = await axios.post(
           "/api/v1/msgs",
@@ -37,9 +56,10 @@ const SingleChat = () => {
             },
           }
         );
-        console.log(data);
+        socket.emit("sendMessage", data);
         setNewMessage("");
-        setMessages([...messages, data]);
+        const temp = messages;
+        setMessages([...temp, data]);
       } catch (error) {
         toast({
           title: "Error Occured",
@@ -54,6 +74,24 @@ const SingleChat = () => {
   };
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
+
+    if (!socketConnected) {
+      return;
+    }
+    if (!typing) {
+      setTypinig(true);
+      socket.emit("typing", selectedChat._id);
+    }
+    let lastTyping = new Date().getTime();
+    let timer = 3000;
+    setTimeout(() => {
+      let timeNow = new Date().getTime();
+      let timeDiff = timeNow - lastTyping;
+      if (timeDiff >= timer && typing) {
+        socket.emit("stopTyping", selectedChat._id);
+        setTypinig(false);
+      }
+    }, timer);
   };
   const fetchMessages = async () => {
     if (!selectedChat) {
@@ -68,6 +106,7 @@ const SingleChat = () => {
       });
       setMessages(data);
       setLoading(false);
+      socket.emit("joinChat", selectedChat._id);
       console.log(messages);
     } catch (error) {
       toast({
@@ -83,8 +122,21 @@ const SingleChat = () => {
   };
   useEffect(() => {
     fetchMessages();
+    selectedChatCompare = selectedChat;
   }, [selectedChat]);
-  console.log(messages);
+  useEffect(() => {
+    socket.on("messageRecieved", (newMessageRecieved) => {
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== newMessageRecieved.chat._id
+      ) {
+        //Notificartion
+      } else {
+        const temp = messages;
+        setMessages([...temp, newMessageRecieved]);
+      }
+    });
+  });
   return (
     <>
       {selectedChat ? (
@@ -148,17 +200,46 @@ const SingleChat = () => {
                   scrollbarWidth: "none",
                 }}
               >
-                <ChatMessage messages={messages}/>
+                <ChatMessage messages={messages} />
               </div>
             )}
 
             <FormControl onKeyDown={sendMessage} isRequired mt={3}>
-              <Input
-                placeholder="Message..."
-                bg="#e0e0e0"
-                onChange={typingHandler}
-                value={newMessage}
-              />
+              {isTyping ? (
+                <div>
+                  <Lottie
+                    options={{
+                      loop: true,
+                      autoplay: true,
+                      animationData: animationData,
+                      rendererSettings: {
+                        preserveAspectRatio: "xMidYMid slice",
+                      },
+                    }}
+                    width={70}
+                    style={{ marginBottom: 15, marginLeft: 0 }}
+                  />
+                </div>
+              ) : (
+                <></>
+              )}
+              <InputGroup>
+                <Input
+                  placeholder="Message..."
+                  bg="#e0e0e0"
+                  onChange={typingHandler}
+                  value={newMessage}
+                />
+                <InputRightElement width="4.5rem">
+                  <IconButton
+                    h="1.75rem"
+                    size="sm"
+                    bg="#e0e0e0"
+                    onClick={sendMessage}
+                    icon={<ArrowRightIcon />}
+                  />
+                </InputRightElement>
+              </InputGroup>
             </FormControl>
           </Box>
         </>
