@@ -20,7 +20,7 @@ import axios from "axios";
 import io from "socket.io-client";
 import ChatMessage from "./ChatMessage";
 import animationData from "../../assets/typingAnimation.json";
-const ENDPOINT = "http://localhost:5000";
+const ENDPOINT = "https://chit-chat-mern-vo4h.onrender.com";
 let socket, selectedChatCompare;
 const SingleChat = () => {
   const [messages, setMessages] = useState([]);
