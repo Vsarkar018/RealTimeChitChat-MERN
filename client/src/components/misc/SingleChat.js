@@ -26,7 +26,15 @@ const SingleChat = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState();
-  const { user, selectedChat, setSelectedChat } = useChatContext();
+  const {
+    user,
+    selectedChat,
+    setSelectedChat,
+    notification,
+    setNotification,
+    setFetchAgain,
+    fetchAgain,
+  } = useChatContext();
   const [typing, setTypinig] = useState(false);
   const [isTyping, setIsTypinig] = useState(false);
   const toast = useToast();
@@ -130,7 +138,11 @@ const SingleChat = () => {
         !selectedChatCompare ||
         selectedChatCompare._id !== newMessageRecieved.chat._id
       ) {
-        //Notificartion
+        if (!notification.includes(newMessageRecieved)) {
+          const temp = notification;
+          setNotification([newMessageRecieved, ...temp]);
+          setFetchAgain(!fetchAgain);
+        }
       } else {
         const temp = messages;
         setMessages([...temp, newMessageRecieved]);
