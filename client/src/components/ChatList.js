@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useChatContext } from "../context/ChatProvider";
-import { Box, Button, useToast, Text, Stack } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Button,
+  useToast,
+  Text,
+  Stack,
+  Menu,
+  MenuButton,
+  IconButton,
+} from "@chakra-ui/react";
+import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import axios from "axios";
 import ChatLoading from "./misc/ChatLoading";
 import { getSender } from "../config/Logic";
 import GroupChatModal from "./misc/GroupChatModal";
 const ChatList = () => {
   const [loggedUser, setLoggedUser] = useState();
-  
+  const [toBeDeleteChat, setToBeDeletechat] = useState();
   const { user, selectedChat, setSelectedChat, chats, setChats, fetchAgain } =
     useChatContext();
   const Toast = useToast();
@@ -32,14 +41,15 @@ const ChatList = () => {
       });
       return;
     }
-  }
+  };
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
   }, [fetchAgain]);
+
   return (
     <Box
-       display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
+      display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
       flexDir="column"
       alignItems="center"
       p={3}
@@ -47,7 +57,7 @@ const ChatList = () => {
       w={{ base: "100%", md: "31%" }}
       borderRadius="lg"
       borderWidth="1px"
-      >
+    >
       <Box
         py={3}
         px={3}
@@ -94,8 +104,16 @@ const ChatList = () => {
                 >
                   <Text>
                     {!chat.isGroup && chat
-                      ? getSender(loggedUser,chat.users)
+                      ? getSender(loggedUser, chat.users)
                       : chat.chatName}
+                    {chat.latestMessage && (
+                      <Text fontSize="xs">
+                        <b>{chat.latestMessage.sender.name} : </b>
+                        {chat.latestMessage.content.length > 50
+                          ? chat.latestMessage.content.substring(0, 51) + "..."
+                          : chat.latestMessage.content}
+                      </Text>
+                    )}
                   </Text>
                 </Box>
               );

@@ -49,7 +49,8 @@ const SingleChat = () => {
   }, []);
 
   const sendMessage = async (e) => {
-    if (e.key === "Enter" && newMessage) {
+    console.log(e);
+    if ((e._reactName === "onClick")||(e._reactName === "onKeyDown" && e.key === "Enter" && newMessage)) {
       socket.emit("stopTyping", selectedChat._id);
       try {
         const { data } = await axios.post(
@@ -115,7 +116,6 @@ const SingleChat = () => {
       setMessages(data);
       setLoading(false);
       socket.emit("joinChat", selectedChat._id);
-      console.log(messages);
     } catch (error) {
       toast({
         title: "Error Occured",
@@ -149,6 +149,7 @@ const SingleChat = () => {
       }
     });
   });
+
   return (
     <>
       {selectedChat ? (

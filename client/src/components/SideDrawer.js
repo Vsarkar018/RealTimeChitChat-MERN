@@ -28,7 +28,7 @@ import axios from "axios";
 import ChatLoading from "./misc/ChatLoading";
 import UserList from "./UserList";
 import { getSender } from "../config/Logic";
-import NotificationBadge ,{Effect} from "react-notification-badge";
+import NotificationBadge, { Effect } from "react-notification-badge";
 const SideDrawer = () => {
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
@@ -113,28 +113,30 @@ const SideDrawer = () => {
       });
     }
   };
-  // const getAllUsers = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const { data } = await axios.get(`/api/v1/user/all`, {
-  //       headers: {
-  //         Authorization: `Bearer ${user.token}`,
-  //       },
-  //     });
-  //     setLoading(false);
-  //     setSearchResult(data);
-  //   } catch (error) {
-  //     console.log(error);
-  //     Toast({
-  //       title: "Failed to load the data",
-  //       description: error.response.data,
-  //       status: "error",
-  //       duration: 2000,
-  //       isClosable: true,
-  //       position: "bottom-left",
-  //     });
-  //   }
-  // };
+  const getAllUsers = async () => {
+    onOpen();
+    try {
+      setLoading(true);
+      const { data } = await axios.get(`/api/v1/user/all`, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      setLoading(false);
+      setSearchResult(data);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+      Toast({
+        title: "Failed to load the data",
+        description: error.response.data,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+        position: "bottom-left",
+      });
+    }
+  };
   return (
     <>
       <Box
@@ -147,7 +149,7 @@ const SideDrawer = () => {
         borderWidth="5PX"
       >
         <Tooltip lable="Search User" hasArrow placement="bottom-end">
-          <Button variant="ghost" ref={btnRef} onClick={onOpen}>
+          <Button variant="ghost" ref={btnRef} onClick={getAllUsers}>
             <i className="fa-sharp fa-solid fa-magnifying-glass"></i>
             <Text display={{ base: "none", md: "flex" }} px="4">
               Search User
@@ -158,8 +160,10 @@ const SideDrawer = () => {
         <div>
           <Menu>
             <MenuButton p={1}>
-              <NotificationBadge count={notification.length}
-              effect={Effect.SCALE}/>
+              <NotificationBadge
+                count={notification.length}
+                effect={Effect.SCALE}
+              />
               <BellIcon fontSize="2xl" m={1} />
             </MenuButton>
             <MenuList pl={3}>
@@ -170,7 +174,9 @@ const SideDrawer = () => {
                     key={noti._id}
                     onClick={() => {
                       setSelectedChat(noti.chat);
-                      setNotification(notification.filter((n) => n.chat._id !== noti.chat._id));
+                      setNotification(
+                        notification.filter((n) => n.chat._id !== noti.chat._id)
+                      );
                     }}
                   >
                     {noti.chat.isGroup
