@@ -7,7 +7,7 @@ const {
   createGroupChat,
   renameGroup,
   addToGroup,
-  removeFromGroup
+  removeFromGroup,
 } = require("../controller/chatController");
 
 router.route("/").post(accessChats).get(fetchChats);

@@ -38,15 +38,13 @@ const loginUser = async (req, res) => {
     throw new Unauthorized("Invalid Password");
   }
   const token = user.CreateJwt();
-  res
-    .status(StatusCodes.OK)
-    .json({
-      _id: user._id,
-      name: user.name,
-      pic: user.pic,
-      email: user.email,
-      token: token,
-    });
+  res.status(StatusCodes.OK).json({
+    _id: user._id,
+    name: user.name,
+    pic: user.pic,
+    email: user.email,
+    token: token,
+  });
 };
 
 const getUsers = async (req, res) => {
@@ -64,7 +62,7 @@ const getUsers = async (req, res) => {
   res.status(StatusCodes.OK).json(users);
 };
 const getAllUsers = async (req, res) => {
-  const users = await User.find(keyword)
+  const users = await User.find()
     .find({ _id: { $ne: req.user._id } })
     .select("-password");
   res.status(StatusCodes.OK).json(users);
