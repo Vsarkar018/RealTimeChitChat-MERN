@@ -13,19 +13,13 @@ const messageRoutes = require("./routes/messageRoutes");
 const authMiddleware = require("./middleware/auth");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 const notFound = require("./middleware/notFound");
-const path = require("path");
-const { log } = require("console");
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/chats", authMiddleware, chatRoutes);
 app.use("/api/v1/msgs", authMiddleware, messageRoutes);
 
 //_______For Deployement_________
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../client/build")));
-  app.get("*", (req, res) => {
-    console.log(__dirname);
-    res.sendFile(path.resolve(__dirname, "..","client", "build", "index.html"));
-  });
+  app.use(express.static('./public/build'));
 } else {
   app.get("/", (req, res) => {
     res.status(200).send("API is Running");
